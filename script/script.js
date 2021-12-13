@@ -8,8 +8,6 @@ function random() {
     return Math.floor(Math.random() * 6) + 1;
 }
 
-let nb = 0;
-
 class Character {
 
     constructor(posX, posY, width, height, image) {
@@ -81,34 +79,50 @@ class Obstacle {
     moveObstacle() {
         this.clearObstacle();
         this.posX -= 50;
-        // Character.displayCharacter();
     }
 
 }
 
+let nb = 5;
+
+for (let i = 0; i < nb; i++) {
+    imageObstacle[i] = new Obstacle(1000 - i * 200, 530, 47, 73, './img/cactus.png');
+}
 let imageDino = new Character(0, 500, 102, 94, './img/trex.png');
 
 imageDino.image.onload = function () {
     imageDino.displayCharacter();
 };
 
-
 // Boucle du jeu
-//while (!gameOver) {
-    nb = random();
+let jouer = setInterval(() => {
+
     for (let i = 0; i < nb; i++) {
-        imageObstacle[i] = new Obstacle(500 * nb, 530, 47, 73, './img/cactus.png');
         imageObstacle[i].image.onload = function () {
             imageObstacle[i].displayObstacle();
         };
 
-        if (imageObstacle[i].posX == imageDino.posX) {
+        if (imageObstacle[i].posX == imageDino.posX && imageObstacle[i].posY == imageDino.posY) {
             gameOver = true;
+            clearInterval(jouer);
         } else {
-            imageObstacle[i].moveObstacle();
+            imageObstacle[i].clearObstacle()
+            imageObstacle[i].posX += -5
+            imageObstacle[i].displayObstacle();
+            imageDino.displayCharacter();
+            
         }
     }
-//}
+
+    if(gameOver) {
+        clearInterval(jouer);
+        context.font = '48px red';
+        context.fillText('Perdu !', 10, 50);
+    }else {
+        context.fillText('', 10, 50); 
+    }
+},
+100);
 
 document.addEventListener('keydown', function (event) {
     imageDino.jump(event);
